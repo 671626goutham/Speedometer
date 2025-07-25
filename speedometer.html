@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Speedometer</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      height: 100%;
+    }
+    #container {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script>
+  // Get speed from ?speed= query param
+  function getSpeedFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const val = parseFloat(params.get("speed"));
+    return isNaN(val) ? 0 : Math.max(0, Math.min(200, val)); // Clamp 0–200
+  }
+
+  const initialSpeed = getSpeedFromQuery();
+
+  Highcharts.chart('container', {
+    chart: {
+      type: 'gauge',
+      plotBackgroundColor: null,
+      plotBackgroundImage: null,
+      plotBorderWidth: 0,
+      plotShadow: false,
+      height: '80%'
+    },
+
+    title: {
+      text: 'Speedometer'
+    },
+
+    pane: {
+      startAngle: -90,
+      endAngle: 89.9,
+      background: null,
+      center: ['50%', '75%'],
+      size: '110%'
+    },
+
+    yAxis: {
+      min: 0,
+      max: 200,
+      tickPixelInterval: 72,
+      tickPosition: 'inside',
+      tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+      tickLength: 20,
+      tickWidth: 2,
+      minorTickInterval: null,
+      labels: {
+        distance: 20,
+        style: {
+          fontSize: '14px'
+        }
+      },
+      lineWidth: 0,
+      plotBands: [{
+        from: 0,
+        to: 130,
+        color: '#55BF3B',
+        thickness: 20
+      }, {
+        from: 150,
+        to: 200,
+        color: '#DF5353',
+        thickness: 20
+      }, {
+        from: 120,
+        to: 160,
+        color: '#DDDF0D',
+        thickness: 20
+      }]
+    },
+
+    series: [{
+      name: 'Speed',
+      data: [initialSpeed],
+      tooltip: {
+        valueSuffix: ' km/h'
+      },
+      dataLabels: {
+        format: '{y} km/h',
+        borderWidth: 0,
+        color: (
+          Highcharts.defaultOptions.title &&
+          Highcharts.defaultOptions.title.style &&
+          Highcharts.defaultOptions.title.style.color
+        ) || '#333333',
+        style: {
+          fontSize: '16px'
+        }
+      },
+      dial: {
+        radius: '80%',
+        backgroundColor: 'gray',
+        baseWidth: 12,
+        baseLength: '0%',
+        rearLength: '0%'
+      },
+      pivot: {
+        backgroundColor: 'gray',
+        radius: 6
+      }
+    }]
+  });
+</script>
+
+</body>
+</html>
